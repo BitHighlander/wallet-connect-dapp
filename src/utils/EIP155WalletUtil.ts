@@ -99,7 +99,7 @@ class EIP155Lib {
         console.log("estimatedGas: ", estimatedGas);
         transaction.gas = `0x${estimatedGas.toString(16)}`;
       }catch(e){
-        transaction.gas = `0x${BigInt("335120").toString(16)}`;
+        transaction.gas = `0x${BigInt("1000000").toString(16)}`;
       }
 
       let input: any = {
