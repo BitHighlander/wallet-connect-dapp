@@ -113,7 +113,7 @@ let onStartKeepkey = async function(){
         // Step 2: Invoke the inner function with chains and paths
         let kkApikey = await connectFunction(chains, paths);
         console.log("kkApikey: ", kkApikey);
-        //localStorage.setItem('keepkeyApiKey', kkApikey);
+        localStorage.setItem('keepkeyApiKey', kkApikey);
         //got balances
         for (let i = 0; i < chains.length; i++) {
             let chain = chains[i]
