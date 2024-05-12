@@ -45,8 +45,20 @@ export default function WalletConnectPage(params: { deepLink?: string }) {
     }
   }, [deepLink])
 
+  const restart = () => {
+    window.location.reload();
+  };
+
+
   return (
     <Fragment>
+      <Button
+          size="xs"
+          onClick={restart}
+          color="gradient"
+      >
+        Reboot
+      </Button>
       <PageHeader title="WalletConnect" />
       <>
         <QrReader onConnect={onConnect} />
