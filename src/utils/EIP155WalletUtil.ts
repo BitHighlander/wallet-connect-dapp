@@ -118,14 +118,14 @@ class EIP155Lib {
       // input.maxPriorityFeePerGas = transaction.maxPriorityFeePerGas;
 
       // Add EIP-1559 fields if applicable
-      if (transaction.chainId === 1) {
-        input.maxFeePerGas = transaction.maxFeePerGas;
-        input.maxPriorityFeePerGas = transaction.maxPriorityFeePerGas;
-      } else {
-        // For non-EIP-1559 transactions
-        input.gasPrice = transaction.gasPrice;
-      }
-
+      // if (transaction.chainId === 1) {
+      //   input.maxFeePerGas = transaction.maxFeePerGas;
+      //   input.maxPriorityFeePerGas = transaction.maxPriorityFeePerGas;
+      // } else {
+      //   // For non-EIP-1559 transactions
+      //   input.gasPrice = transaction.gasPrice;
+      // }
+      input.gasPrice = transaction.gasPrice;
       // Proceed with transaction signing
       console.log(`${tag} Final input: `, input);
       let output = await this.wallet.ETH.keepkeySdk.eth.ethSignTransaction(input);

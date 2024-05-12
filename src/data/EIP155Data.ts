@@ -69,6 +69,23 @@ export const EIP155_MAINNET_CHAINS: Record<string, EIP155Chain> = {
     rgb: '242, 242, 242',
     rpc: 'https://mainnet.base.org',
     namespace: 'eip155'
+  },
+  //
+  'eip155:42161': {
+    chainId: 8453,
+    name: 'Arbitrum',
+    logo: '/chain-logos/arbitrum.png',
+    rgb: '4, 100, 214',
+    rpc: 'https://api.zan.top/node/v1/arb/one/public',
+    namespace: 'eip155'
+  },
+  'eip155:100': {
+    chainId: 100,
+    name: 'Gnosis',
+    logo: '/chain-logos/gnosis.png',
+    rgb: '33, 186, 69',
+    rpc: 'https://api.zan.top/node/v1/arb/one/public',
+    namespace: 'eip155'
   }
 }
 
