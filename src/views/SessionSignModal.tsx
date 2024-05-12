@@ -58,8 +58,11 @@ export default function SessionSignModal() {
           response
         })
       } catch (e) {
+
         setIsLoadingReject(false)
         styledToast((e as Error).message, 'error')
+        //reboot on error
+        window.location.reload();
         return
       }
       setIsLoadingReject(false)
