@@ -97,12 +97,12 @@ export default function SettingsPage() {
       {/*  be used elsewhere!*/}
       {/*</Text>*/}
 
-      <Text h4 css={{ marginTop: '$5', marginBottom: '$5' }}>
-        EIP155 Mnemonic
-      </Text>
-      <Card bordered borderWeight="light" css={{ minHeight: '100px' }}>
-        <Text css={{ fontFamily: '$mono' }}>{eip155Wallets[eip155Address].getMnemonic()}</Text>
-      </Card>
+      {/*<Text h4 css={{ marginTop: '$5', marginBottom: '$5' }}>*/}
+      {/*  EIP155 Mnemonic*/}
+      {/*</Text>*/}
+      {/*<Card bordered borderWeight="light" css={{ minHeight: '100px' }}>*/}
+      {/*  <Text css={{ fontFamily: '$mono' }}>{eip155Wallets[eip155Address].getMnemonic()}</Text>*/}
+      {/*</Card>*/}
 
       {/*<Text h4 css={{ marginTop: '$10', marginBottom: '$5' }}>*/}
       {/*  Cosmos Mnemonic*/}
