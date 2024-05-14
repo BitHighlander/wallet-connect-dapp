@@ -46,7 +46,23 @@ export default function WalletConnectPage(params: { deepLink?: string }) {
   }, [deepLink])
 
   const restart = () => {
-    window.location.reload();
+    // Clear localStorage
+    localStorage.clear();
+
+    // Clear sessionStorage
+    sessionStorage.clear();
+
+    // Delete all IndexedDB databases
+    indexedDB.databases().then((databases: any[]) => {
+      databases.forEach((db: any) => {
+        indexedDB.deleteDatabase(db.name);
+      });
+
+      // Wait a short period to ensure all databases are deleted
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+    });
   };
 
 
