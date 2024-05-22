@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { Col, Divider, Row, Text } from '@nextui-org/react'
 import { useCallback, useState } from 'react'
-
+import axios from 'axios';
 import RequesDetailsCard from '@/components/RequestDetalilsCard'
 import ModalStore from '@/store/ModalStore'
 import { approveEIP155Request, rejectEIP155Request } from '@/utils/EIP155RequestHandlerUtil'
 import { getSignParamsMessage, styledToast } from '@/utils/HelperUtil'
 import { web3wallet } from '@/utils/WalletConnectUtil'
 import RequestModal from './RequestModal'
+
 export default function SessionSignModal() {
   // Get request and wallet data from store
   const requestEvent = ModalStore.state.data?.requestEvent
@@ -31,8 +32,31 @@ export default function SessionSignModal() {
   const onApprove = useCallback(async () => {
     if (requestEvent) {
       setIsLoadingApprove(true)
+
+      // async function checkTransaction(tx: any): Promise&lt;any&gt; {
+      //   const url = 'https://pioneers.dev/api/v1/checkTx';
+      //   const headers = {
+      //     //TODO move to env
+      //     'Authorization': 'keepkey-wallet-connect-public',
+      //     'Content-Type': 'application/json'
+      //   };
+      //
+      //   try {
+      //     const response = await axios.post(url, { tx }, { headers });
+      //     return response.data;
+      //   } catch (error) {
+      //     console.error('Error checking transaction:', error);
+      //     throw new Error(`Error: ${error.response ? error.response.data : error.message}`);
+      //   }
+      // }
+
       const response = await approveEIP155Request(requestEvent)
       try {
+        console.log("SignModal: ", {
+          topic,
+          response
+        })
+
         await web3wallet.respondSessionRequest({
           topic,
           response

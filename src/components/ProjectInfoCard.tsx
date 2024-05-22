@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
 import { useSnapshot } from 'valtio'
 import SettingsStore from '@/store/SettingsStore'
 import ReportIcon from '@mui/icons-material/Report'
@@ -49,6 +49,12 @@ export default function ProjectInfoCard({ metadata, intention }: IProps) {
   const { currentRequestVerifyContext } = useSnapshot(SettingsStore.state)
   const validation = currentRequestVerifyContext?.verified.validation
   const { icons, name, url } = metadata
+
+  useEffect(() => {
+    //check URL
+    console.log("PROPOSAL URL: ", url)
+  }
+    , [url])
 
   return (
     <div style={{ textAlign: 'center' }}>

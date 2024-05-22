@@ -15,6 +15,7 @@ import useKeepKey from '@/hooks/useKeepKey'
 export default function SessionSendTransactionModal() {
   const [isLoadingApprove, setIsLoadingApprove] = useState(false)
   const [isLoadingReject, setIsLoadingReject] = useState(false)
+  const [feeData, setFeeData] = useState(false)
 
   // Get request and wallet data from store
   const requestEvent = ModalStore.state.data?.requestEvent
@@ -34,7 +35,8 @@ export default function SessionSendTransactionModal() {
     if (requestEvent && topic) {
       setIsLoadingApprove(true)
       try {
-        const response = await approveEIP155Request(requestEvent)
+        console.log("requestEvent: ", requestEvent)
+        const response = await approveEIP155Request(requestEvent, feeData)
         await web3wallet.respondSessionRequest({
           topic,
           response
@@ -69,6 +71,11 @@ export default function SessionSendTransactionModal() {
     }
   }, [requestEvent, topic, keepKey])
 
+  const updateFeeData = function(feeData){
+    console.log("updateFeeData: ", feeData)
+    setFeeData(feeData)
+  }
+
   return request && requestSession ? (
     <RequestModal
       intention="sign a transaction"
@@ -78,8 +85,8 @@ export default function SessionSendTransactionModal() {
       approveLoader={{ active: isLoadingApprove }}
       rejectLoader={{ active: isLoadingReject }}
     >
-      {/*<RequestFeeCard data={transaction} />*/}
-      {/*<Divider y={1} />*/}
+      <RequestFeeCard data={transaction} updateFeeData={updateFeeData} />
+      <Divider y={1} />
       <RequestDataCard data={transaction} />
       <Divider y={1} />
       <RequesDetailsCard chains={[chainId ?? '']} protocol={requestSession?.relay.protocol} />
