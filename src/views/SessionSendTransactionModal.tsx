@@ -70,12 +70,11 @@ export default function SessionSendTransactionModal() {
     }
   }, [requestEvent, topic, keepKey])
 
-  const updateFeeData = function(feeData:any){
+  const updateFeeData = function(feeData:any, isEIP1559:boolean){
     console.log("updateFeeData: ", feeData)
     setFeeData(feeData)
     console.log('transaction: ', transaction)
-    let eip1559 = true
-    if(!eip1559){
+    if(!isEIP1559){
       transaction.gasPrice = feeData.gasPrice
       transaction.maxFeePerGas = null
       transaction.maxPriorityFeePerGas = null
@@ -97,7 +96,7 @@ export default function SessionSendTransactionModal() {
       approveLoader={{ active: isLoadingApprove }}
       rejectLoader={{ active: isLoadingReject }}
     >
-      <RequestFeeCard data={transaction} updateFeeData={updateFeeData} />
+      <RequestFeeCard data={transaction} updateFeeData={updateFeeData} chainId={chainId}/>
       <Divider y={1} />
       <RequestDataCard data={transaction} />
       <Divider y={1} />

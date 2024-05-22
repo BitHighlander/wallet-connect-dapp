@@ -1,23 +1,37 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { FormControl, FormControlLabel, Radio, RadioGroup, TextField, Typography, Alert, Button } from '@mui/material';
+import {
+  FormControl,
+  FormLabel,
+  Switch,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+  Typography,
+  Alert,
+  Button,
+  AlertTitle,
+  Box
+} from '@mui/material';
 import { EIP155_CHAINS } from "@/data/EIP155Data";
 import { JsonRpcProvider } from "ethers";
 
-const RequestFeeCard = ({ data, updateFeeData }: any) => {
-  const [selectedFee, setSelectedFee] = useState('dappSuggested');
+const RequestFeeCard = ({ data, updateFeeData, chainId }:any) => {
+  const [selectedFee, setSelectedFee] = useState('');
   const [customFee, setCustomFee] = useState('');
   const [dappProvidedFee, setDappProvidedFee] = useState(false);
   const [displayFee, setDisplayFee] = useState('');
   const [feeWarning, setFeeWarning] = useState(false);
   const [isEIP1559, setIsEIP1559] = useState(false);
-  const [fees, setFees] = useState<any>({
+  const [fees, setFees] = useState({
     dappSuggested: '',
     networkRecommended: ''
   });
 
   const getFee = async () => {
     try {
-      const network = 'eip155:1'; // TODO: Get the current chain
+      const network = chainId; // TODO: Get the current chain
+      console.log("** network: ", network)
       const rpcUrl = EIP155_CHAINS[network].rpc;
       const provider = new JsonRpcProvider(rpcUrl);
       const feeData = await provider.getFeeData();
@@ -27,7 +41,7 @@ const RequestFeeCard = ({ data, updateFeeData }: any) => {
           ? (BigInt(feeData.gasPrice.toString()) / BigInt(1e9)).toString() // Convert from Wei to Gwei
           : '';
 
-      setFees((prevFees:any) => ({
+      setFees((prevFees) => ({
         ...prevFees,
         networkRecommended: networkRecommendedFee,
       }));
@@ -35,7 +49,7 @@ const RequestFeeCard = ({ data, updateFeeData }: any) => {
       setFeeWarning(false);
     } catch (e) {
       console.error('Error fetching fee data:', e);
-      setFeeWarning(true);
+      //setFeeWarning(true);
     }
   };
 
@@ -45,15 +59,21 @@ const RequestFeeCard = ({ data, updateFeeData }: any) => {
     if (!data.maxPriorityFeePerGas && !data.maxFeePerGas && !data.gasPrice) {
       getFee();
       setDappProvidedFee(false);
+      setSelectedFee('networkRecommended');
     } else {
-      // If data is provided, use it and display it
+      const dappFee = (BigInt(data?.gasPrice.toString()) / BigInt(1e9)).toString(); // Convert from Wei to Gwei
+      const networkFee = fees.networkRecommended;
       setDappProvidedFee(true);
-      setFees((prevFees:any) => ({
+      setFees((prevFees) => ({
         ...prevFees,
-        dappSuggested: (BigInt(data?.gasPrice.toString()) / BigInt(1e9)).toString(), // Convert from Wei to Gwei
+        dappSuggested: dappFee,
       }));
+      if (networkFee && BigInt(dappFee) < BigInt(networkFee)) {
+        setFeeWarning(true);
+      }
+      setSelectedFee('dappSuggested');
     }
-  }, [data]);
+  }, [data, fees.networkRecommended]);
 
   useEffect(() => {
     if (selectedFee === 'custom') {
@@ -63,11 +83,11 @@ const RequestFeeCard = ({ data, updateFeeData }: any) => {
     }
   }, [selectedFee, customFee, fees]);
 
-  const handleFeeChange = (event: any) => {
+  const handleFeeChange = (event) => {
     setSelectedFee(event.target.value);
   };
 
-  const handleCustomFeeChange = (event: any) => {
+  const handleCustomFeeChange = (event) => {
     setCustomFee(event.target.value);
   };
 
@@ -107,8 +127,18 @@ const RequestFeeCard = ({ data, updateFeeData }: any) => {
   return (
       <Fragment>
         {!dappProvidedFee && (
-            <Alert severity="warning">Dapp failed to return fee, using recommended fee</Alert>
+            <Typography variant="body2" sx={{ fontStyle: 'italic', mt: 2 }}>
+              Please select a fee option below:
+            </Typography>
         )}
+
+        {feeWarning && (
+            <Alert severity="warning" sx={{ borderRadius: 1, mb: 2 }}>
+              <AlertTitle>Warning</AlertTitle>
+              Dapp suggested fee is lower than the network recommended fee.
+            </Alert>
+        )}
+
         <FormControl component="fieldset">
           <RadioGroup aria-label="fee" name="fee" value={selectedFee} onChange={handleFeeChange}>
             {dappProvidedFee && (
@@ -141,12 +171,29 @@ const RequestFeeCard = ({ data, updateFeeData }: any) => {
               />
           )}
         </FormControl>
-        <Typography variant="h6" style={{ marginTop: '20px' }}>
+        <Typography variant="h6" sx={{ mt: 2 }}>
           Current Fee: {displayFee}
         </Typography>
-        <Button variant="contained" color="primary" onClick={handleSubmit} style={{ marginTop: '20px' }}>
-          Submit Fee
-        </Button>
+        <Box display="flex" alignItems="center" sx={{ mt: 2, justifyContent: 'space-between' }}>
+          <Button variant="contained" color="success" onClick={handleSubmit}>
+            Submit Fee
+          </Button>
+          <Box display="flex" alignItems="center">
+            <Typography variant="caption" sx={{ fontStyle: 'italic', mr: 1 }}>
+              Use EIP-1559:
+            </Typography>
+            <Switch
+                id="isEIP1559"
+                checked={isEIP1559}
+                onChange={() => setIsEIP1559(!isEIP1559)}
+                sx={{
+                  '& .MuiSwitch-thumb': {
+                    color: isEIP1559 ? 'blue' : 'white'
+                  }
+                }}
+            />
+          </Box>
+        </Box>
       </Fragment>
   );
 };
