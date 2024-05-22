@@ -50,7 +50,7 @@ export default function SessionSignModal() {
       //   }
       // }
 
-      const response = await approveEIP155Request(requestEvent)
+      const response = await approveEIP155Request(requestEvent, {})
       try {
         console.log("SignModal: ", {
           topic,

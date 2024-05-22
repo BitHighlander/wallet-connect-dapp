@@ -34,7 +34,7 @@ export default function SessionSignTypedDataModal() {
   const onApprove = useCallback(async () => {
     if (requestEvent) {
       setIsLoadingApprove(true)
-      const response = await approveEIP155Request(requestEvent)
+      const response = await approveEIP155Request(requestEvent, {})
       try {
         await web3wallet.respondSessionRequest({
           topic,

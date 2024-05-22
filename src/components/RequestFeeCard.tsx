@@ -10,7 +10,7 @@ const RequestFeeCard = ({ data, updateFeeData }: any) => {
   const [displayFee, setDisplayFee] = useState('');
   const [feeWarning, setFeeWarning] = useState(false);
   const [isEIP1559, setIsEIP1559] = useState(false);
-  const [fees, setFees] = useState({
+  const [fees, setFees] = useState<any>({
     dappSuggested: '',
     networkRecommended: ''
   });
@@ -27,7 +27,7 @@ const RequestFeeCard = ({ data, updateFeeData }: any) => {
           ? (BigInt(feeData.gasPrice.toString()) / BigInt(1e9)).toString() // Convert from Wei to Gwei
           : '';
 
-      setFees((prevFees) => ({
+      setFees((prevFees:any) => ({
         ...prevFees,
         networkRecommended: networkRecommendedFee,
       }));
@@ -48,9 +48,9 @@ const RequestFeeCard = ({ data, updateFeeData }: any) => {
     } else {
       // If data is provided, use it and display it
       setDappProvidedFee(true);
-      setFees((prevFees) => ({
+      setFees((prevFees:any) => ({
         ...prevFees,
-        dappSuggested: (BigInt(data.gasPrice.toString()) / BigInt(1e9)).toString(), // Convert from Wei to Gwei
+        dappSuggested: (BigInt(data?.gasPrice.toString()) / BigInt(1e9)).toString(), // Convert from Wei to Gwei
       }));
     }
   }, [data]);

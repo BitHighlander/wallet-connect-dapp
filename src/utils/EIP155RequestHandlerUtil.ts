@@ -11,7 +11,7 @@ import { getSdkError } from '@walletconnect/utils'
 import SettingsStore from '@/store/SettingsStore'
 type RequestEventArgs = Omit<SignClientTypes.EventArguments['session_request'], 'verifyContext'>
 
-export async function approveEIP155Request(requestEvent: RequestEventArgs, feeData: any) {
+export async function approveEIP155Request(requestEvent: any, feeData?: any) {
   const { params, id } = requestEvent
   const { chainId, request } = params
 

@@ -70,7 +70,7 @@ export default function SessionSendTransactionModal() {
     }
   }, [requestEvent, topic, keepKey])
 
-  const updateFeeData = function(feeData){
+  const updateFeeData = function(feeData:any){
     console.log("updateFeeData: ", feeData)
     setFeeData(feeData)
     console.log('transaction: ', transaction)
