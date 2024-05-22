@@ -9,6 +9,7 @@ const RequestFeeCard = ({ data, updateFeeData }: any) => {
   const [dappProvidedFee, setDappProvidedFee] = useState(false);
   const [displayFee, setDisplayFee] = useState('');
   const [feeWarning, setFeeWarning] = useState(false);
+  const [isEIP1559, setIsEIP1559] = useState(false);
   const [fees, setFees] = useState({
     dappSuggested: '',
     networkRecommended: ''
@@ -72,24 +73,35 @@ const RequestFeeCard = ({ data, updateFeeData }: any) => {
 
   const handleSubmit = () => {
     let selectedFeeData;
+    const feeInGwei = selectedFee === 'custom' ? customFee : fees[selectedFee];
 
-    if (selectedFee === 'custom') {
-      const customFeeInWei = BigInt(customFee) * BigInt(1e9); // Convert from Gwei to Wei
+    if (isEIP1559) {
+      const baseFeeInWei = BigInt(feeInGwei) * BigInt(1e9);
+      const priorityFeeInWei = BigInt(2 * 1e9); // Example priority fee of 2 Gwei
+      const maxFeeInWei = baseFeeInWei + priorityFeeInWei;
+
       selectedFeeData = {
-        gasPrice: customFeeInWei.toString(),
-        maxFeePerGas: customFeeInWei.toString(),
-        maxPriorityFeePerGas: customFeeInWei.toString()
+        gasPrice: baseFeeInWei.toString(),
+        maxFeePerGas: maxFeeInWei.toString(),
+        maxPriorityFeePerGas: priorityFeeInWei.toString()
       };
     } else {
-      const feeInGwei = fees[selectedFee];
+      const gasPriceInWei = BigInt(feeInGwei) * BigInt(1e9);
       selectedFeeData = {
-        gasPrice: (BigInt(feeInGwei) * BigInt(1e9)).toString(), // Convert from Gwei to Wei
-        maxFeePerGas: (BigInt(feeInGwei) * BigInt(1e9)).toString(),
-        maxPriorityFeePerGas: (BigInt(feeInGwei) * BigInt(1e9)).toString()
+        gasPrice: gasPriceInWei.toString(),
+        maxFeePerGas: gasPriceInWei.toString(),
+        maxPriorityFeePerGas: gasPriceInWei.toString()
       };
     }
 
-    updateFeeData(selectedFeeData);
+    // Convert to hex format
+    const feeDataHex = {
+      gasPrice: `0x${BigInt(selectedFeeData.gasPrice).toString(16)}`,
+      maxFeePerGas: `0x${BigInt(selectedFeeData.maxFeePerGas).toString(16)}`,
+      maxPriorityFeePerGas: `0x${BigInt(selectedFeeData.maxPriorityFeePerGas).toString(16)}`
+    };
+
+    updateFeeData(feeDataHex);
   };
 
   return (
