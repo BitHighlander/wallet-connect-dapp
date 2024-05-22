@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { FormControl, FormControlLabel, Radio, RadioGroup, TextField, Typography, Alert } from '@mui/material';
+import { FormControl, FormControlLabel, Radio, RadioGroup, TextField, Typography, Alert, Button } from '@mui/material';
 import { EIP155_CHAINS } from "@/data/EIP155Data";
 import { JsonRpcProvider } from "ethers";
 
@@ -70,6 +70,28 @@ const RequestFeeCard = ({ data, updateFeeData }: any) => {
     setCustomFee(event.target.value);
   };
 
+  const handleSubmit = () => {
+    let selectedFeeData;
+
+    if (selectedFee === 'custom') {
+      const customFeeInWei = BigInt(customFee) * BigInt(1e9); // Convert from Gwei to Wei
+      selectedFeeData = {
+        gasPrice: customFeeInWei.toString(),
+        maxFeePerGas: customFeeInWei.toString(),
+        maxPriorityFeePerGas: customFeeInWei.toString()
+      };
+    } else {
+      const feeInGwei = fees[selectedFee];
+      selectedFeeData = {
+        gasPrice: (BigInt(feeInGwei) * BigInt(1e9)).toString(), // Convert from Gwei to Wei
+        maxFeePerGas: (BigInt(feeInGwei) * BigInt(1e9)).toString(),
+        maxPriorityFeePerGas: (BigInt(feeInGwei) * BigInt(1e9)).toString()
+      };
+    }
+
+    updateFeeData(selectedFeeData);
+  };
+
   return (
       <Fragment>
         {!dappProvidedFee && (
@@ -110,6 +132,9 @@ const RequestFeeCard = ({ data, updateFeeData }: any) => {
         <Typography variant="h6" style={{ marginTop: '20px' }}>
           Current Fee: {displayFee}
         </Typography>
+        <Button variant="contained" color="primary" onClick={handleSubmit} style={{ marginTop: '20px' }}>
+          Submit Fee
+        </Button>
       </Fragment>
   );
 };

@@ -25,8 +25,7 @@ export default function SessionSendTransactionModal() {
   const params = requestEvent?.params
   const chainId = params?.chainId
   const request = params?.request
-  const transaction = request?.params[0]
-
+  const [transaction, setTransaction] = useState(request?.params[0])
   // Use the custom hook to get the KeepKey client
   const keepKey = useKeepKey();
 
@@ -74,6 +73,19 @@ export default function SessionSendTransactionModal() {
   const updateFeeData = function(feeData){
     console.log("updateFeeData: ", feeData)
     setFeeData(feeData)
+    console.log('transaction: ', transaction)
+    let eip1559 = true
+    if(!eip1559){
+      transaction.gasPrice = feeData.gasPrice
+      transaction.maxFeePerGas = null
+      transaction.maxPriorityFeePerGas = null
+    }else{
+      transaction.gasPrice = null
+      transaction.maxFeePerGas = feeData.maxFeePerGas
+      transaction.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas
+    }
+    setTransaction(transaction)
+    console.log('transaction: ', transaction)
   }
 
   return request && requestSession ? (
