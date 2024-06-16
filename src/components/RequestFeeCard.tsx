@@ -1,47 +1,44 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import {
   FormControl,
-  FormLabel,
-  Switch,
-  FormControlLabel,
-  Radio,
   RadioGroup,
+  Radio,
+  FormControlLabel,
   TextField,
   Typography,
   Alert,
   Button,
   AlertTitle,
-  Box
+  Box,
+  Switch
 } from '@mui/material';
 import { EIP155_CHAINS } from "@/data/EIP155Data";
 import { JsonRpcProvider } from "ethers";
 
-const RequestFeeCard = ({ data, updateFeeData, chainId }:any) => {
+const RequestFeeCard = ({ data, updateFeeData, chainId }) => {
   const [selectedFee, setSelectedFee] = useState('');
   const [customFee, setCustomFee] = useState('');
   const [dappProvidedFee, setDappProvidedFee] = useState(false);
   const [displayFee, setDisplayFee] = useState('');
   const [feeWarning, setFeeWarning] = useState(false);
   const [isEIP1559, setIsEIP1559] = useState(false);
-  const [fees, setFees] = useState<any>({
+  const [fees, setFees] = useState({
     dappSuggested: '',
     networkRecommended: ''
   });
 
   const getFee = async () => {
     try {
-      const network = chainId; // TODO: Get the current chain
-      console.log("** network: ", network)
+      const network = chainId;
       const rpcUrl = EIP155_CHAINS[network].rpc;
       const provider = new JsonRpcProvider(rpcUrl);
       const feeData = await provider.getFeeData();
-      console.log("** feeData: ", feeData);
 
       const networkRecommendedFee = feeData.gasPrice
-          ? (BigInt(feeData.gasPrice.toString()) / BigInt(1e9)).toString() // Convert from Wei to Gwei
+          ? (BigInt(feeData.gasPrice.toString()) / BigInt(1e9)).toString()
           : '';
 
-      setFees((prevFees:any) => ({
+      setFees(prevFees => ({
         ...prevFees,
         networkRecommended: networkRecommendedFee,
       }));
@@ -49,22 +46,22 @@ const RequestFeeCard = ({ data, updateFeeData, chainId }:any) => {
       setFeeWarning(false);
     } catch (e) {
       console.error('Error fetching fee data:', e);
-      //setFeeWarning(true);
     }
   };
 
   useEffect(() => {
-    console.log("** data: ", data);
-
     if (!data.maxPriorityFeePerGas && !data.maxFeePerGas && !data.gasPrice) {
       getFee();
       setDappProvidedFee(false);
       setSelectedFee('networkRecommended');
     } else {
-      const dappFee = (BigInt(data?.gasPrice.toString()) / BigInt(1e9)).toString(); // Convert from Wei to Gwei
+      const dappFee = data.gasPrice
+          ? (BigInt(data.gasPrice.toString()) / BigInt(1e9)).toString()
+          : '';
       const networkFee = fees.networkRecommended;
+
       setDappProvidedFee(true);
-      setFees((prevFees:any) => ({
+      setFees(prevFees => ({
         ...prevFees,
         dappSuggested: dappFee,
       }));
@@ -83,11 +80,11 @@ const RequestFeeCard = ({ data, updateFeeData, chainId }:any) => {
     }
   }, [selectedFee, customFee, fees]);
 
-  const handleFeeChange = (event:any) => {
+  const handleFeeChange = (event) => {
     setSelectedFee(event.target.value);
   };
 
-  const handleCustomFeeChange = (event:any) => {
+  const handleCustomFeeChange = (event) => {
     setCustomFee(event.target.value);
   };
 
@@ -97,7 +94,7 @@ const RequestFeeCard = ({ data, updateFeeData, chainId }:any) => {
 
     if (isEIP1559) {
       const baseFeeInWei = BigInt(feeInGwei) * BigInt(1e9);
-      const priorityFeeInWei = BigInt(2 * 1e9); // Example priority fee of 2 Gwei
+      const priorityFeeInWei = BigInt(2 * 1e9);
       const maxFeeInWei = baseFeeInWei + priorityFeeInWei;
 
       selectedFeeData = {
@@ -114,7 +111,6 @@ const RequestFeeCard = ({ data, updateFeeData, chainId }:any) => {
       };
     }
 
-    // Convert to hex format
     const feeDataHex = {
       gasPrice: `0x${BigInt(selectedFeeData.gasPrice).toString(16)}`,
       maxFeePerGas: `0x${BigInt(selectedFeeData.maxFeePerGas).toString(16)}`,
