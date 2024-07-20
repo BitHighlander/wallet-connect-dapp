@@ -20,45 +20,57 @@ class EIP155Lib {
   }
 
   async getMnemonic() {
-    // Implement if KeepKey allows extracting mnemonic, which is unlikely due to security reasons
-    return "lol, no";
-  }
-
-  async getPrivateKey() {
-    // This is also highly sensitive and usually not directly accessible
-    return "lol, no";
-  }
-
-  async getAddress() {
-    console.log("keepkey: ",this.wallet)
-    console.log("this.wallet.ETH: ",this.wallet.ETH)
-    console.log("this.wallet.ETH: ",this.wallet.ETH.wallet)
-    console.log("this.wallet.ETH.wallet.address: ",this.wallet.ETH.wallet.address)
-    // Use KeepKey's method to get the wallet address
-    return this.wallet.ETH.wallet.address;
-  }
-
-  async signMessage(message: any) {
-    try{
-      console.log("signMessage: ", message)
-      console.log("this.wallet.ETH.walletMethods: ",this.wallet.ETH.walletMethods)
-      // Use KeepKey's method to sign a message
-      let address = this.wallet.ETH.wallet.address
-      const messageFormated = `0x${Buffer.from(
-        Uint8Array.from(
-          typeof message === 'string' ? new TextEncoder().encode(message) : message,
-        ),
-      ).toString('hex')}`
-      return this.wallet.ETH.keepkeySdk.eth.ethSign({address,message:messageFormated});
-    }catch(e){
-      console.error(e)
+    try {
+      // Implement if KeepKey allows extracting mnemonic, which is unlikely due to security reasons
+      return "lol, no";
+    } catch (e) {
+      console.error(e);
     }
   }
 
-  async signTransaction(transaction:any) {
+  async getPrivateKey() {
+    try {
+      // This is also highly sensitive and usually not directly accessible
+      return "lol, no";
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async getAddress() {
+    try {
+      console.log("keepkey: ", this.wallet)
+      console.log("this.wallet.ETH: ", this.wallet.ETH)
+      console.log("this.wallet.ETH: ", this.wallet.ETH.wallet)
+      console.log("this.wallet.ETH.wallet.address: ", this.wallet.ETH.wallet.address)
+      // Use KeepKey's method to get the wallet address
+      return this.wallet.ETH.wallet.address;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async signMessage(message: any) {
+    try {
+      console.log("signMessage: ", message)
+      console.log("this.wallet.ETH.walletMethods: ", this.wallet.ETH.walletMethods)
+      // Use KeepKey's method to sign a message
+      let address = this.wallet.ETH.wallet.address
+      const messageFormated = `0x${Buffer.from(
+          Uint8Array.from(
+              typeof message === 'string' ? new TextEncoder().encode(message) : message,
+          ),
+      ).toString('hex')}`
+      return this.wallet.ETH.keepkeySdk.eth.ethSign({ address, message: messageFormated });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async signTransaction(transaction: any) {
     let tag = TAG + " | signTransaction | ";
     try {
-      console.log(tag,"**** transaction: ", transaction);
+      console.log(tag, "**** transaction: ", transaction);
 
       // Basic transaction validation
       if (!transaction.from) throw Error("invalid tx missing from");
@@ -90,7 +102,7 @@ class EIP155Lib {
 
       // transaction.gas = `0x${BigInt("300000").toString(16)}`;
 
-      try{
+      try {
         const estimatedGas = await provider.estimateGas({
           from: transaction.from,
           to: transaction.to,
@@ -98,7 +110,7 @@ class EIP155Lib {
         });
         console.log("estimatedGas: ", estimatedGas);
         transaction.gas = `0x${estimatedGas.toString(16)}`;
-      }catch(e){
+      } catch (e) {
         transaction.gas = `0x${BigInt("1000000").toString(16)}`;
       }
 
@@ -131,9 +143,6 @@ class EIP155Lib {
       let output = await this.wallet.ETH.keepkeySdk.eth.ethSignTransaction(input);
       console.log(`${tag} Transaction output: `, output);
 
-      //
-
-
       return output.serialized;
     } catch (e) {
       console.error(`${tag} Error: `, e);
@@ -142,16 +151,16 @@ class EIP155Lib {
   }
 
   //signTypedData
-  async signTypedData(params:any) {
+  async signTypedData(params: any) {
     let tag = TAG + " | signTypedData | ";
     try {
-      console.log(tag,"**** params: ", params);
+      console.log(tag, "**** params: ", params);
       let signedMessage = await this.wallet.ETH.keepkeySdk.eth.ethSignTypedData({
         address: this.wallet.ETH.wallet.address,
         addressNList: [2147483692, 2147483708, 2147483648, 0, 0],
         typedData: params,
       })
-      console.log(tag,"**** signedMessage: ", signedMessage);
+      console.log(tag, "**** signedMessage: ", signedMessage);
       return signedMessage;
       // return output.serialized;
     } catch (e) {
@@ -160,26 +169,24 @@ class EIP155Lib {
     }
   }
 
-
   //broadcast
   async broadcastTransaction(signedTx: string, networkId: string) {
-    try{
+    try {
       let rpcUrl = EIP155_CHAINS[networkId as TEIP155Chain].rpc
-      console.log('rpcUrl: ',rpcUrl)
+      console.log('rpcUrl: ', rpcUrl)
       const provider = new JsonRpcProvider(rpcUrl)
       console.log('provider:', provider);
       // Broadcasting the signed transaction
       const receipt = await provider.send('eth_sendRawTransaction', [signedTx]);
       console.log('Transaction receipt:', receipt);
 
-
       // // Optionally, wait for the transaction to be mined
       // const receipt = await txResponse.wait();
       // console.log('Transaction receipt:', receipt);
 
       return receipt;
-    }catch(e){
-      console.error(e)
+    } catch (e) {
+      console.error(e);
     }
   }
 

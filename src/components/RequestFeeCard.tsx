@@ -15,14 +15,14 @@ import {
 import { EIP155_CHAINS } from "@/data/EIP155Data";
 import { JsonRpcProvider } from "ethers";
 
-const RequestFeeCard = ({ data, updateFeeData, chainId }) => {
+const RequestFeeCard = ({ data, updateFeeData, chainId }:any) => {
   const [selectedFee, setSelectedFee] = useState('');
   const [customFee, setCustomFee] = useState('');
   const [dappProvidedFee, setDappProvidedFee] = useState(false);
   const [displayFee, setDisplayFee] = useState('');
   const [feeWarning, setFeeWarning] = useState(false);
   const [isEIP1559, setIsEIP1559] = useState(false);
-  const [fees, setFees] = useState({
+  const [fees, setFees] = useState<any>({
     dappSuggested: '',
     networkRecommended: ''
   });
@@ -38,7 +38,7 @@ const RequestFeeCard = ({ data, updateFeeData, chainId }) => {
           ? (BigInt(feeData.gasPrice.toString()) / BigInt(1e9)).toString()
           : '';
 
-      setFees(prevFees => ({
+      setFees((prevFees:any) => ({
         ...prevFees,
         networkRecommended: networkRecommendedFee,
       }));
@@ -61,7 +61,7 @@ const RequestFeeCard = ({ data, updateFeeData, chainId }) => {
       const networkFee = fees.networkRecommended;
 
       setDappProvidedFee(true);
-      setFees(prevFees => ({
+      setFees((prevFees:any) => ({
         ...prevFees,
         dappSuggested: dappFee,
       }));
@@ -80,11 +80,11 @@ const RequestFeeCard = ({ data, updateFeeData, chainId }) => {
     }
   }, [selectedFee, customFee, fees]);
 
-  const handleFeeChange = (event) => {
+  const handleFeeChange = (event:any) => {
     setSelectedFee(event.target.value);
   };
 
-  const handleCustomFeeChange = (event) => {
+  const handleCustomFeeChange = (event:any) => {
     setCustomFee(event.target.value);
   };
 
